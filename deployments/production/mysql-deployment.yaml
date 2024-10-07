@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  replicas: 1  # Number of MySQL pods
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:latest
+        ports:
+        - containerPort: 3306  
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"  # Set the root password
+        - name: MYSQL_DATABASE
+          value: "testdb"  # The database to create
+        - name: MYSQL_USER
+          value: "user"  # Database user
+        - name: MYSQL_PASSWORD
+          value: "password"  # User password
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql  # Persistent storage path for MySQL
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc  # Reference to Persistent Volume Claim
