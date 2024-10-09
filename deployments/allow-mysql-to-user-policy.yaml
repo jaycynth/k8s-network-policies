@@ -1,0 +1,12 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-mysql-to-user
+spec:
+  endpointSelector:
+    matchLabels:
+      app: user
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: mysql

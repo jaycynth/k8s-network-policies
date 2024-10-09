@@ -1,12 +1,12 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-microservice-to-mysql
+  name: default-deny-user
 spec:
   endpointSelector:
     matchLabels:
       app: user
+  ingress:
+  - fromEndpoints: []
   egress:
-  - toEndpoints:
-    - matchLabels:
-        app: mysql
+  - toEndpoints: []

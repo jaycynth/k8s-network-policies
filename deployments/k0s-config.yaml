@@ -1,0 +1,23 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-cluster
+spec:
+  hosts:
+  - ssh:
+      address: 192.168.10.1
+      user: vm1
+      port: 22
+      keyPath: /c/Users/onfon/.ssh/id_ed25519
+    role: controller
+  - ssh:
+      address: 192.168.10.2
+      user: vm2
+      port: 22
+      keyPath: /c/Users/onfon/.ssh/id_ed25519
+    role: worker
+  k0s:
+    version: 1.24.2+k0s.0
+    dynamicConfig: false
+
+
