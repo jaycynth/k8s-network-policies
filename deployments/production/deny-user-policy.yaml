@@ -1,0 +1,13 @@
+# Default_deny: denies all ingress and egress traffic for the microservice
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-user
+spec:
+  endpointSelector:
+    matchLabels:
+      app: user
+  ingress:
+  - fromEndpoints: []
+  egress:
+  - toEndpoints: []

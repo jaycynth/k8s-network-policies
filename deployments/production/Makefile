@@ -36,3 +36,17 @@ status:
 # Show logs for the application pods
 logs:
 	$(KUBECTL) logs -l app=$(APP_NAME)
+
+
+deployPolicies:
+	kubectl apply -f allow-mysql-to-user-policy.yaml
+	kubectl apply -f allow-user-to-mysql-policy.yaml
+	kubectl apply -f deny-user-policy.yaml
+
+
+getAllPods:
+	kubectl get pods --all-namespaces
+
+
+accessUserService:
+	kubectl port-forward service/user 50051:50051
