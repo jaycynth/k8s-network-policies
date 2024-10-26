@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/jaycynth/k8s-network-policies/pkg/user";
+
+
+message User {
+    uint32 id = 1;        
+    string name = 2;      
+    string email = 3;     
+}
+
+service UserService {
+    rpc GetUserById(UserRequest) returns (UserResponse);
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+message UserRequest {
+    uint32 id = 1;
+}
+
+message UserResponse {
+    User user = 1;
+}
+
+message CreateUserRequest {
+    string name = 1;
+    string email = 2;
+}
+
+message CreateUserResponse {
+    uint32 id = 1;
+    string message = 2;
+}

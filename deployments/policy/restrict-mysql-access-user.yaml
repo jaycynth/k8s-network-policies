@@ -1,0 +1,13 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: restrict-mysql-access
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      app: mysql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: user
