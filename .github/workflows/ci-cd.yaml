@@ -35,6 +35,7 @@ jobs:
         working-directory: infra 
         run: |
           terraform init
+          terraform plan
           terraform apply -auto-approve
 
       - name: Run Ansible Playbook
