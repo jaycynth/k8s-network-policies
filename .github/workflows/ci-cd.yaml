@@ -43,5 +43,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          cd infra  # Ensure we are in the correct directory
+          cd ansible  
           ansible-playbook -i inventory k0s.yml
