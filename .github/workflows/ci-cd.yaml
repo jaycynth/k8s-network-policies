@@ -64,4 +64,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           cd ansible
-          ansible-playbook -i inventory k0s.yml
+          ansible-playbook -i inventory k0s.yaml
