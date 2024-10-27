@@ -39,10 +39,16 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve
-          terraform output -json > outputs.json
-
-      - name: Check Terraform JSON Output
-        run: cat outputs.json
+          terraform output -json > outputs.json || (echo "Terraform output failed" && exit 1)
+          
+      - name: Verify JSON Output Exists
+              run: |
+                if [ ! -f outputs.json ]; then
+                  echo "Error: outputs.json was not created"
+                  exit 1
+                else
+                  cat outputs.json
+                fi
         
       - name: Set Controller and Worker IPs as Environment Variables
         if: ${{ success() && (steps.terraform_output.outputs.controller_public_ip != '' && steps.terraform_output.outputs.worker_public_ip != '') }}
