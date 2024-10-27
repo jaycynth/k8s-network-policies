@@ -53,13 +53,9 @@ jobs:
           echo "${{ env.controller_ip }} ansible_ssh_user=ubuntu" >> ansible/inventory
           echo "${{ env.worker_ip }} ansible_ssh_user=ubuntu" >> ansible/inventory
 
-      - name: List current directory
-        working-directory: ansible
-        run: ls -R
-
       - name: Display inventory file content
         working-directory: ansible
-        run: cat ansible/inventory
+        run: cat inventory
 
       - name: Run Ansible Playbook
         env:
@@ -67,5 +63,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          cd infra
-          ansible-playbook -i ansible/inventory k0s.yml
+          cd ansible
+          ansible-playbook -i inventory k0s.yml
