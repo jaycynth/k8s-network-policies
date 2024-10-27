@@ -31,22 +31,22 @@ jobs:
       - name: Change to infra directory
         run: cd infra
 
-      - name: Run Terraform
+      - name: Run Terraform and capture outputs
         working-directory: infra
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           terraform init
           terraform apply -auto-approve
-
-      - name: Get Terraform Outputs
-        id: terraform_outputs
-        run: |
           terraform output -json > outputs.json
+
+      - name: Check Terraform JSON Output
+        run: cat outputs.json
+        
+      - name: Set Controller and Worker IPs as Environment Variables
+        if: ${{ success() && (steps.terraform_output.outputs.controller_public_ip != '' && steps.terraform_output.outputs.worker_public_ip != '') }}
+        run: |
           echo "controller_ip=$(jq -r .controller_public_ip.value outputs.json)" >> $GITHUB_ENV
           echo "worker_ip=$(jq -r .worker_public_ip.value outputs.json)" >> $GITHUB_ENV
-
+        shell: /usr/bin/bash -e {0}
       - name: Create Ansible Inventory
         run: |
           echo "[k0s]" > ansible/inventory
