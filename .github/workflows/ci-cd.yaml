@@ -39,7 +39,8 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve
-          terraform output -json > outputs.json || (echo "Terraform output failed" && exit 1)
+          terraform output -json > "$GITHUB_WORKSPACE/outputs.json"
+
 
       - name: Verify JSON Output Exists
         run: |
