@@ -7,13 +7,12 @@
     hubble_version: "1.16.2"
 
   tasks:
-    - name: Ensure dependencies are installed
+    - name: Dependencies installation
       apt:
         name:
           - curl
           - sudo
           - kubectl
-          - conntrack
         state: present
         update_cache: true
 
