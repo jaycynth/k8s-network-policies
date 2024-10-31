@@ -38,13 +38,16 @@ jobs:
           terraform apply -auto-approve
           terraform output -json > "$GITHUB_WORKSPACE/outputs.json"
 
-      - name: Verify JSON Output Exists
+      - name: Verify JSON Output and Structure
         run: |
           if [ ! -f "$GITHUB_WORKSPACE/outputs.json" ]; then
             echo "Error: outputs.json was not created"
             exit 1
           else
+            echo "Displaying outputs.json content:"
             cat "$GITHUB_WORKSPACE/outputs.json"
+            echo "Displaying parsed JSON structure:"
+            jq '.' "$GITHUB_WORKSPACE/outputs.json"  # Verify the JSON structure
           fi
 
       - name: Set Controller and Worker IPs as Environment Variables
@@ -58,6 +61,7 @@ jobs:
           echo "controller_ip=$controller_ip" >> $GITHUB_ENV
           echo "worker_ip=$worker_ip" >> $GITHUB_ENV
         shell: bash
+
 
       - name: Create Ansible Inventory
         run: |
