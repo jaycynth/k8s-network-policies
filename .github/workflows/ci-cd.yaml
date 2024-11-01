@@ -36,7 +36,7 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve
-          terraform output -json | jq 'with_entries(select(.value.sensitive | not))' > "$GITHUB_WORKSPACE/outputs.json"
+          terraform output -json | jq 'with_entries(select(.value.sensitive | not))' > "$GITHUB_WORKSPACE/outputs.json" || (echo "Error generating outputs.json" && exit 1)
 
       - name: Verify JSON Output Structure
         run: |
