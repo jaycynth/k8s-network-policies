@@ -45,9 +45,7 @@ jobs:
             exit 1
           else
             echo "Displaying outputs.json content:"
-            cat "$GITHUB_WORKSPACE/outputs.json"
-            echo "Displaying parsed JSON structure:"
-            jq '.' "$GITHUB_WORKSPACE/outputs.json"  # Verify the JSON structure
+            cat "$GITHUB_WORKSPACE/outputs.json" 
           fi
 
       - name: Set Controller and Worker IPs as Environment Variables
@@ -68,6 +66,7 @@ jobs:
           echo "[k0s]" > ansible/inventory
           echo "$controller_ip ansible_ssh_user=ubuntu" >> ansible/inventory
           echo "$worker_ip ansible_ssh_user=ubuntu" >> ansible/inventory
+          cat ansible/inventory
 
       - name: Display inventory file content
         working-directory: ansible
