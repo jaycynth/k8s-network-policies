@@ -1,0 +1,36 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: restrict-mysql-access-to-user
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      app: mysql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: user 
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP
+
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-user-egress-to-mysql
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      app: user
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: mysql
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP

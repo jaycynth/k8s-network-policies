@@ -1,0 +1,12 @@
+---
+all:
+  hosts:
+    k8s_master:
+      ansible_host: 34.245.154.106
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: ~/.ssh/kos_k8s.pem 
+
+    k8s_worker:
+      ansible_host: 34.247.164.209
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: ~/.ssh/kos_k8s.pem 

@@ -1,12 +1,11 @@
+#All traffic is denied by default unless explicitly allowed
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: default-deny-user
+  name: deny-all
+  namespace: default 
 spec:
   endpointSelector:
-    matchLabels:
-      app: user
+    matchLabels: {}
   ingress:
   - fromEndpoints: []
-  egress:
-  - toEndpoints: []

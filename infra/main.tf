@@ -1,24 +1,14 @@
-terraform {
-  required_providers {
-    aws={
-        source = "hashicorp/aws"
-        version = "5.32.1"
-    }
-  }
-}
-
-
 provider "aws" {
   region = "eu-west-1"
- 
- 
+  access_key = "AKIAVWABJ67OSTX45TF2"
+  secret_key = "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"
 }
 
 
 
 # Define variables for instance settings
 variable "instance_type" {
-  default = "t2.medium"
+  default = "t2.large"
 }
 
 variable "vpc_cidr" {
@@ -67,10 +57,10 @@ resource "aws_route_table_association" "k0s_route_table_assoc" {
   route_table_id = aws_route_table.k0s_route_table.id
 }
 
-# Security Group to allow SSH and Kubernetes ports
 resource "aws_security_group" "k0s_sg" {
   vpc_id = aws_vpc.k0s_vpc.id
 
+  # Allow SSH
   ingress {
     from_port   = 22
     to_port     = 22
@@ -78,6 +68,7 @@ resource "aws_security_group" "k0s_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow Kubernetes API server
   ingress {
     from_port   = 6443
     to_port     = 6443
@@ -85,6 +76,7 @@ resource "aws_security_group" "k0s_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow HTTP traffic (Grafana and other web services)
   ingress {
     from_port   = 80
     to_port     = 80
@@ -92,6 +84,7 @@ resource "aws_security_group" "k0s_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow HTTPS traffic (Grafana, Prometheus)
   ingress {
     from_port   = 443
     to_port     = 443
@@ -99,6 +92,55 @@ resource "aws_security_group" "k0s_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow Prometheus metrics (default port is 9090)
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow Grafana (default NodePort is 3000)
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow Cilium Hubble UI (default port is 80 for HTTP)
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Cilium Health
+  ingress {
+    from_port   = 4240
+    to_port     = 4240
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Hubble metrics
+  ingress {
+    from_port   = 4245
+    to_port     = 4245
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow traffic to all ports in the NodePort range (30000-32767)
+  ingress {
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Egress rule allowing all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -110,6 +152,7 @@ resource "aws_security_group" "k0s_sg" {
     Name = "k0s-sg"
   }
 }
+
 
 # Generate SSH Key Pair
 resource "tls_private_key" "k0s" {
@@ -125,7 +168,7 @@ output "private_key" {
 resource "local_file" "k0s_private_key" {
   content  = tls_private_key.k0s.private_key_pem
   filename = "${path.module}/kos_k8s.pem"
-  file_permission = "0600"  # Set file permissions to be read/write only for the owner
+  file_permission = "0600"
 }
 
 
@@ -198,7 +241,7 @@ resource "aws_instance" "k0s_worker" {
     inline = [
       "mkdir -p /home/ubuntu/.ssh",
       "chmod 700 /home/ubuntu/.ssh",
-      "chmod 600 /home/ubuntu/.ssh/kos_k8s.pem",  # Fix key file permissions
+      "chmod 600 /home/ubuntu/.ssh/kos_k8s.pem",
       "curl -sSLf https://get.k0s.sh | sudo sh",
       "echo 'Fetching the token from the controller...'",
       "ssh -o StrictHostKeyChecking=no -i /home/ubuntu/.ssh/kos_k8s.pem ubuntu@${aws_instance.k0s_controller.public_ip} 'cat /tmp/k0s_worker_token' > /tmp/k0s_worker_token",
