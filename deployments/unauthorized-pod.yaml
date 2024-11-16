@@ -1,11 +1,38 @@
-apiVersion: v1
-kind: Pod
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: unauthorized-pod
+#   labels:
+#     app: unauthorized
+# spec:
+#   containers:
+#   - name: unauthorized
+#     image: alpine
+#     command: [ "sleep", "3600" ]
+
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: unauthorized-pod
-  labels:
-    app: unauthorized
+  namespace: default
 spec:
-  containers:
-  - name: unauthorized
-    image: alpine
-    command: [ "sleep", "3600" ]
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unauthorized-pod
+  template:
+    metadata:
+      labels:
+        app: unauthorized-pod
+    spec:
+      containers:
+      - name: mysql-client
+        image: mysql:5.7 
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            while true; do
+              echo "Attempting to connect to MySQL..."
+              mysql -h mysql-service -u user -p password -e "SELECT 1";
+              sleep 5;  # Wait before trying again
+            done
