@@ -19,9 +19,9 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: manual  # This must match the StorageClass in PVC
+  storageClassName: manual  
   hostPath:
-    path: /mnt/data          # Ensure this path exists on the node where the pod runs
+    path: /mnt/data        
 
 ---
 
@@ -36,7 +36,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: manual  # This must match the StorageClass of the PV
+  storageClassName: manual  
 
 ---
 
